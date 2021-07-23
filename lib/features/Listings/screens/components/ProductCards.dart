@@ -41,10 +41,13 @@ class ProductsCard extends StatelessWidget {
       String collectionDescription = collection['node']['description'];
       int indexOfIcon = collectionDescription.indexOf(RegExp(r'icon'));
       int indexOfInfo = collectionDescription.indexOf('[info]');
-      print(indexOfIcon);
-      print(indexOfInfo);
-      //print(collectionDescription.substring(indexOfIcon, indexOfInfo));
-      //print(collection['node']['description']);
+      String iconDescription =
+          collectionDescription.substring(indexOfIcon, indexOfInfo);
+
+      String iconName = (iconDescription
+          .split('=')[1]
+          .replaceAll(new RegExp(r"\s+\b|\b\s"), ""));
+      print(iconName);
     });
 
     productDetails['image'] = image;
