@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:best_deals/common/services/ShopifyQueries/ShopifyQueries.dart';
 import 'package:best_deals/common/services/ShopifyQueries/ShopifyGQLConfigurations.dart';
 
-class Loading extends StatefulWidget {
+class LoadingProductList extends StatefulWidget {
   @override
-  _LoadingState createState() => _LoadingState();
+  _LoadingProductListState createState() => _LoadingProductListState();
 }
 
-class _LoadingState extends State<Loading> {
+class _LoadingProductListState extends State<LoadingProductList> {
   void fetchListings() async {
     Queries query = Queries();
     ShopifyGQLConfigurations listingsQuery = ShopifyGQLConfigurations();
