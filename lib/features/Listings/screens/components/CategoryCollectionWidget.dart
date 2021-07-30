@@ -6,10 +6,14 @@ import 'package:best_deals/common/services/ShopifyQueries/ShopifyQueries.dart';
 import 'package:best_deals/common/services/ShopifyQueries/ShopifyGQLConfigurations.dart';
 
 class CategoryCollection extends StatelessWidget {
-  const CategoryCollection({Key? key, required this.categoryCollection})
-      : super(key: key);
-
   final categoryCollection;
+  Future<void> getFilterProductData;
+
+  // const CategoryCollection({Key? key, required this.categoryCollection, required this.Future<void> getFilterProductData})
+  //     : super(key: key);
+  CategoryCollection({categoryCollection, getFilterProductData})
+      : categoryCollection = categoryCollection,
+        getFilterProductData = getFilterProductData;
 
   @override
   Widget build(BuildContext context) {
@@ -23,11 +27,12 @@ class CategoryCollection extends StatelessWidget {
               height: 30,
             ),
             buildMenuItem(
-              text: collectionDetails['collectionTitle'],
-              icon: MdiIcons.fromString(collectionDetails['iconName']),
-              onClicked: () => loadCollectionProducts(
-                  context, collectionDetails['handleName']),
-            )
+                text: collectionDetails['collectionTitle'],
+                icon: MdiIcons.fromString(collectionDetails['iconName']),
+                onClicked: () => getFilterProductData
+                // onClicked: () => loadCollectionProducts(
+                //     context, collectionDetails['handleName']),
+                )
           ],
         ),
       ],

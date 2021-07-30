@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:best_deals/features/Listings/screens/components/LeftNavigationDrawerWidget.dart';
 import 'package:best_deals/features/Listings/screens/components/CategoryCollectionWidget.dart';
 import 'package:best_deals/features/Listings/screens/components/ProductCards.dart';
+import 'package:best_deals/features/Listings/screens/components/ListFilterWidget.dart';
 import 'package:best_deals/common/services/ShopifyQueries/ShopifyQueries.dart';
 import 'package:best_deals/common/services/ShopifyQueries/ShopifyGQLConfigurations.dart';
 
@@ -13,13 +14,6 @@ class Listings extends StatefulWidget {
 }
 
 class _ListingsState extends State<Listings> {
-  Map data = {};
-  ScrollController _scrollController = ScrollController();
-  int _currentMax = 3;
-  List shopifyProducts = [];
-  List<String> shopifyIds = [];
-  List shopifyCollections = [];
-
   @override
   void initState() {
     Future.delayed(Duration.zero, () async {
@@ -34,19 +28,37 @@ class _ListingsState extends State<Listings> {
     });
   }
 
+  Map data = {};
+  ScrollController _scrollController = ScrollController();
+  List shopifyProducts = [];
+  List<String> shopifyIds = [];
+  List shopifyCollections = [];
+  Queries query = Queries();
+  ShopifyGQLConfigurations listingsQuery = ShopifyGQLConfigurations();
+  bool isFirstListLoading = true;
+
   Future<void> _getMoreProductData(shopifyProductsLength) async {
-    Queries query = Queries();
-    ShopifyGQLConfigurations listingsQuery = ShopifyGQLConfigurations();
     String cursor = shopifyProducts[shopifyProductsLength - 1]['cursor'];
     String queryArgument =
         'first:5,sortKey: CREATED_AT, reverse:true, query:"product_type:deal",after:"$cursor"';
     await listingsQuery.fetchShopifyGraphqlQuery(
         query.fetchProducts(queryArgument), 'product');
+    shopifyProducts = listingsQuery.shopifyQueryResult!;
     listingsQuery.shopifyQueryResult!.forEach((product) {
       shopifyProducts.add(product);
     });
-
     setState(() {});
+  }
+
+  Future<void> _getFilterProductData() async {
+    String queryArgument =
+        'first:10, reverse:true, query:"product_type:deal AND vendor:Ebay"';
+    await listingsQuery.fetchShopifyGraphqlQuery(
+        query.fetchProducts(queryArgument), 'product');
+    shopifyProducts.removeRange(0, shopifyProducts.length);
+    shopifyProducts = listingsQuery.shopifyQueryResult!;
+    isFirstListLoading = false;
+    //setState(() {});
   }
 
   _getSharePreferences() async {
@@ -57,7 +69,9 @@ class _ListingsState extends State<Listings> {
   @override
   Widget build(BuildContext context) {
     data = ModalRoute.of(context)!.settings.arguments as Map;
-    shopifyProducts = data['productList'];
+    if (isFirstListLoading) {
+      shopifyProducts = data['productList'];
+    }
     shopifyCollections = data['collectionList'];
 
     List categoryCollections = [];
@@ -75,16 +89,17 @@ class _ListingsState extends State<Listings> {
         centerTitle: true,
       ),
       drawer: LeftNavigationDrawerWidget(),
-      endDrawer: Drawer(
-        child: Material(
-          child: ListView(
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              children: categoryCollections.map((categoryCollection) {
-                return CategoryCollection(
-                    categoryCollection: categoryCollection);
-              }).toList()),
-        ),
-      ),
+      // endDrawer: Drawer(
+      //   child: Material(
+      //     child: ListView(
+      //         padding: EdgeInsets.symmetric(horizontal: 20),
+      //         children: categoryCollections.map((categoryCollection) {
+      //           return CategoryCollection(
+      //               categoryCollection: categoryCollection);
+      //         }).toList()),
+      //   ),
+      // ),
+      endDrawer: ListFilterWidget(shopifyProducts: shopifyProducts),
       body: ListView.builder(
           controller: _scrollController,
           itemCount: shopifyProducts.length,
