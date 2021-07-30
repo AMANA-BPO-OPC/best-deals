@@ -9,7 +9,8 @@ class ListingsService {
     Queries query = Queries();
     ShopifyGQLConfigurations listingsQuery = ShopifyGQLConfigurations();
 
-    await listingsQuery.fetchShopifyGraphqlQuery(query.fetchProducts());
+    await listingsQuery.fetchShopifyGraphqlQuery(
+        query.fetchProducts(), 'product');
     productsList = listingsQuery.shopifyQueryResult;
     productQueryError = listingsQuery.queryError;
   }

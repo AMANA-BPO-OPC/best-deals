@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:best_deals/common/services/ShopifyQueries/ShopifyQueries.dart';
 import 'package:best_deals/common/services/ShopifyQueries/ShopifyGQLConfigurations.dart';
-import 'package:best_deals/features/Listings/services/ProductDetails.dart';
+import 'package:best_deals/common/services/ShopifyProduct/ProductDetails.dart';
 
 class LoadingDealDetail extends StatefulWidget {
   @override
@@ -13,13 +13,17 @@ class _LoadingDealDetailState extends State<LoadingDealDetail> {
   void fetchListings(dealDetails) async {
     Queries query = Queries();
     ShopifyGQLConfigurations listingsQuery = ShopifyGQLConfigurations();
+
+    String productCursor = dealDetails['productDetails']['productCursor'];
     bool hasProductBefore = false;
     bool hasProductAfter = false;
     Map? productBefore;
     Map? productAfter;
 
-    await listingsQuery.fetchShopifyGraphqlQuery(query
-        .fetchProductsBefore(dealDetails['productDetails']['productCursor']));
+    String beforeQueryArgument =
+        'last:1, reverse: true, sortKey: CREATED_AT, query:"product_type:deal", before:"$productCursor"';
+    await listingsQuery.fetchShopifyGraphqlQuery(
+        query.fetchProducts(beforeQueryArgument), 'product');
 
     if (listingsQuery.shopifyQueryResult != null) {
       if (listingsQuery.shopifyQueryResult!.isNotEmpty) {
@@ -28,8 +32,10 @@ class _LoadingDealDetailState extends State<LoadingDealDetail> {
       }
     }
 
-    await listingsQuery.fetchShopifyGraphqlQuery(query
-        .fetchProductsAfter(dealDetails['productDetails']['productCursor']));
+    String afterQueryArgument =
+        'first:5,sortKey: CREATED_AT, reverse:true, query:"product_type:deal",after:"$productCursor"';
+    await listingsQuery.fetchShopifyGraphqlQuery(
+        query.fetchProducts(afterQueryArgument), 'product');
 
     if (listingsQuery.shopifyQueryResult != null) {
       if (listingsQuery.shopifyQueryResult!.isNotEmpty) {

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:best_deals/features/Listings/services/ProductDetails.dart';
+import 'package:best_deals/common/services/ShopifyProduct/ProductDetails.dart';
 
 class ProductsCard extends StatefulWidget {
   const ProductsCard(
@@ -41,10 +41,6 @@ class _ProductsCardState extends State<ProductsCard> {
 
     return Card(
       child: ListTile(
-          // onTap: () {
-          //   Navigator.pushNamed(context, '/dealDetails',
-          //       arguments: {'productDetails': productDetails});
-          // },
           onTap: () {
             Navigator.pushNamed(context, '/loadingDealDetail',
                 arguments: {'productDetails': productDetails});

@@ -15,6 +15,17 @@ class _DealDetailsState extends State<DealDetails> {
         dealDetails['productDetails']['productDetails']['productImages'];
     List iconNames =
         dealDetails['productDetails']['productDetails']['iconNames'];
+
+    Color? leftButtonColor = Colors.grey[600];
+    if (dealDetails['hasProductBefore']) {
+      leftButtonColor = Colors.black;
+    }
+
+    Color? rightButtonColor = Colors.grey[600];
+    if (dealDetails['hasProductAfter']) {
+      rightButtonColor = Colors.black;
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Deal Details'),
@@ -120,13 +131,20 @@ class _DealDetailsState extends State<DealDetails> {
               children: <Widget>[
                 IconButton(
                     onPressed: () {
-                      Navigator.pushNamed(context, '/loadingDealDetail',
-                          arguments: {
-                            'productDetails': dealDetails['productBefore']
-                          });
+                      if (dealDetails['hasProductBefore']) {
+                        Navigator.pushNamed(context, '/loadingDealDetail',
+                            arguments: {
+                              'productDetails': dealDetails['productBefore']
+                            });
+                      } else {
+                        null;
+                      }
                     },
                     iconSize: 60.0,
-                    icon: Icon(Icons.arrow_left)),
+                    icon: Icon(
+                      Icons.arrow_left,
+                      color: leftButtonColor,
+                    )),
                 ElevatedButton(
                     onPressed: () {},
                     child: Text(
@@ -134,14 +152,20 @@ class _DealDetailsState extends State<DealDetails> {
                       style: TextStyle(fontSize: 20.0),
                     )),
                 IconButton(
-                    onPressed: () {
+                  onPressed: () {
+                    if (dealDetails['hasProductAfter']) {
                       Navigator.pushNamed(context, '/loadingDealDetail',
                           arguments: {
                             'productDetails': dealDetails['productAfter']
                           });
-                    },
-                    iconSize: 60.0,
-                    icon: Icon(Icons.arrow_right)),
+                    } else {
+                      null;
+                    }
+                  },
+                  iconSize: 60.0,
+                  icon: Icon(Icons.arrow_right),
+                  color: rightButtonColor,
+                ),
               ],
             ),
           )
