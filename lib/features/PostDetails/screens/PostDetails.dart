@@ -10,6 +10,7 @@ class PostDetails extends StatefulWidget {
 class _PostDetailsState extends State<PostDetails> {
   @override
   Widget build(BuildContext context) {
+    print('JUDE GWAPO KAAU!');
     Map dealDetails = ModalRoute.of(context)!.settings.arguments as Map;
 
     String postMainImage =
@@ -86,6 +87,8 @@ class _PostDetailsState extends State<PostDetails> {
           ),
           Row(
               children: postAllCollection.map((collection) {
+            print('NAA KO SA COLLECTION');
+            print(collection['node']);
             String collectionImage = collection['node']['image']['originalSrc'];
             return IconButton(
               iconSize: 35.0,

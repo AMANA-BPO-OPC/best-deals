@@ -24,7 +24,7 @@ Future<void> filterDeals(
       typeFilters, shopFilters, locationFilters, minimumPrice, maximumPrice);
 
   String queryArgument =
-      'first:5,sortKey: CREATED_AT, reverse:true, query:"$filterArgument"';
+      'first:15,sortKey: CREATED_AT, reverse:true, query:"$filterArgument"';
 
   print(queryArgument);
 

@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:best_deals/features/Listings/screens/components/LeftNavigationDrawerWidget.dart';
 import 'package:best_deals/features/Listings/screens/components/RightNavigationDrawerWidget.dart';
 import 'package:best_deals/features/Listings/screens/components/ProductCards.dart';
+import 'package:best_deals/features/PostListings/screens/components/PostsCard.dart';
 import 'package:best_deals/common/services/ShopifyQueries/ShopifyQueries.dart';
 import 'package:best_deals/common/services/ShopifyQueries/ShopifyGQLConfigurations.dart';
 
@@ -69,10 +70,13 @@ class _ListingsState extends State<Listings> {
           controller: _scrollController,
           itemCount: shopifyProducts.length,
           itemBuilder: (context, index) {
-            return ProductsCard(
-                shopifyProducts: shopifyProducts,
-                index: index,
-                shopifyIds: shopifyIds);
+            if (shopifyProducts[index]['node']['productType'] == 'deal') {
+              return ProductsCard(
+                  shopifyProducts: shopifyProducts,
+                  index: index,
+                  shopifyIds: shopifyIds);
+            }
+            return PostsCard(shopifyPosts: shopifyProducts, index: index);
           }),
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Colors.blue[100],

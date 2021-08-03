@@ -43,6 +43,7 @@ class _PostListingsState extends State<PostListings> {
   Widget build(BuildContext context) {
     data = ModalRoute.of(context)!.settings.arguments as Map;
     shopifyPosts = data['postList'];
+    print('Post Listings build');
 
     return Scaffold(
       appBar: AppBar(

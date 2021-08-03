@@ -27,6 +27,7 @@ class _LoadingPostListingsState extends State<LoadingPostListings> {
 
   @override
   Widget build(BuildContext context) {
+    print('loading post detail');
     return Scaffold(
       body: Center(
         child: Center(

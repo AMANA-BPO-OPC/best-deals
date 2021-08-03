@@ -39,7 +39,10 @@ class Queries {
                 edges{
                   node{
                     title,
-                    description
+                    description,
+                    image{
+                      originalSrc
+                    }
                   }
                 }
               }
