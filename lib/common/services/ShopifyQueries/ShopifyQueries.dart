@@ -12,6 +12,7 @@ class Queries {
               productType,
               vendor,
               description,
+              tags,
               images(first:250){
                 edges{
                   node{

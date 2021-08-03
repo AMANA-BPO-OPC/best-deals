@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 import 'package:best_deals/common/services/ShopifyQueries/ShopifyQueries.dart';
 import 'package:best_deals/common/services/ShopifyQueries/ShopifyGQLConfigurations.dart';
@@ -40,7 +41,6 @@ class _LoadingCollectionProductListState
 
   @override
   void initState() {
-    print('LOADING COLLECTION PRODUCT LIST INIT STATE');
     super.initState();
     //fetchListings();
   }
@@ -54,7 +54,9 @@ class _LoadingCollectionProductListState
     return Scaffold(
       body: Padding(
         padding: EdgeInsets.all(50.0),
-        child: Center(child: Text('Loading')),
+        child: Center(
+          child: SpinKitCircle(color: Colors.blue[400], size: 50.0),
+        ),
       ),
     );
   }

@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:best_deals/features/Listings/screens/components/LeftNavigationDrawerWidget.dart';
-import 'package:best_deals/features/Listings/screens/components/CategoryCollectionWidget.dart';
+import 'package:best_deals/features/Listings/screens/components/RightNavigationDrawerWidget.dart';
 import 'package:best_deals/features/Listings/screens/components/ProductCards.dart';
-import 'package:best_deals/features/Listings/screens/components/ListFilterWidget.dart';
 import 'package:best_deals/common/services/ShopifyQueries/ShopifyQueries.dart';
 import 'package:best_deals/common/services/ShopifyQueries/ShopifyGQLConfigurations.dart';
 
@@ -14,6 +13,17 @@ class Listings extends StatefulWidget {
 }
 
 class _ListingsState extends State<Listings> {
+  Map data = {};
+  ScrollController _scrollController = ScrollController();
+  List shopifyProducts = [];
+  List<String> shopifyIds = [];
+  List shopifyCollections = [];
+  Queries query = Queries();
+  ShopifyGQLConfigurations listingsQuery = ShopifyGQLConfigurations();
+  bool isFirstListLoading = true;
+  int currentIndex = 0;
+  String rightDrawerName = 'collections';
+
   @override
   void initState() {
     Future.delayed(Duration.zero, () async {
@@ -26,44 +36,6 @@ class _ListingsState extends State<Listings> {
         _getMoreProductData(shopifyProducts.length);
       }
     });
-  }
-
-  Map data = {};
-  ScrollController _scrollController = ScrollController();
-  List shopifyProducts = [];
-  List<String> shopifyIds = [];
-  List shopifyCollections = [];
-  Queries query = Queries();
-  ShopifyGQLConfigurations listingsQuery = ShopifyGQLConfigurations();
-  bool isFirstListLoading = true;
-
-  Future<void> _getMoreProductData(shopifyProductsLength) async {
-    String cursor = shopifyProducts[shopifyProductsLength - 1]['cursor'];
-    String queryArgument =
-        'first:5,sortKey: CREATED_AT, reverse:true, query:"product_type:deal",after:"$cursor"';
-    await listingsQuery.fetchShopifyGraphqlQuery(
-        query.fetchProducts(queryArgument), 'product');
-    shopifyProducts = listingsQuery.shopifyQueryResult!;
-    listingsQuery.shopifyQueryResult!.forEach((product) {
-      shopifyProducts.add(product);
-    });
-    setState(() {});
-  }
-
-  Future<void> _getFilterProductData() async {
-    String queryArgument =
-        'first:10, reverse:true, query:"product_type:deal AND vendor:Ebay"';
-    await listingsQuery.fetchShopifyGraphqlQuery(
-        query.fetchProducts(queryArgument), 'product');
-    shopifyProducts.removeRange(0, shopifyProducts.length);
-    shopifyProducts = listingsQuery.shopifyQueryResult!;
-    isFirstListLoading = false;
-    //setState(() {});
-  }
-
-  _getSharePreferences() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    shopifyIds = prefs.getStringList('sample1');
   }
 
   @override
@@ -89,17 +61,10 @@ class _ListingsState extends State<Listings> {
         centerTitle: true,
       ),
       drawer: LeftNavigationDrawerWidget(),
-      // endDrawer: Drawer(
-      //   child: Material(
-      //     child: ListView(
-      //         padding: EdgeInsets.symmetric(horizontal: 20),
-      //         children: categoryCollections.map((categoryCollection) {
-      //           return CategoryCollection(
-      //               categoryCollection: categoryCollection);
-      //         }).toList()),
-      //   ),
-      // ),
-      endDrawer: ListFilterWidget(shopifyProducts: shopifyProducts),
+      endDrawer: RightNavigationDrawerWidget(
+          rightDrawerName: rightDrawerName,
+          categoryCollections: categoryCollections,
+          allProductList: data['allProductList']),
       body: ListView.builder(
           controller: _scrollController,
           itemCount: shopifyProducts.length,
@@ -109,6 +74,70 @@ class _ListingsState extends State<Listings> {
                 index: index,
                 shopifyIds: shopifyIds);
           }),
+      bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: Colors.blue[100],
+        type: BottomNavigationBarType.fixed,
+        currentIndex: currentIndex,
+        onTap: (index) {
+          switch (index) {
+            case 0:
+              setState(() {
+                rightDrawerName = 'collections';
+                currentIndex = index;
+              });
+              break;
+            case 1:
+              setState(() {
+                rightDrawerName = 'info';
+                currentIndex = index;
+              });
+              break;
+            case 2:
+              setState(() {
+                rightDrawerName = 'filter';
+                currentIndex = index;
+              });
+              break;
+            case 3:
+              setState(() {
+                currentIndex = index;
+              });
+              break;
+          }
+        },
+        items: [
+          BottomNavigationBarItem(
+              icon: Icon(Icons.home),
+              label: 'Home',
+              backgroundColor: Colors.blue),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.category),
+              label: 'Collections',
+              backgroundColor: Colors.cyan),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.filter),
+              label: 'Filter',
+              backgroundColor: Colors.amber),
+        ],
+      ),
     );
+  }
+
+  Future<void> _getMoreProductData(shopifyProductsLength) async {
+    String cursor = shopifyProducts[shopifyProductsLength - 1]['cursor'];
+    String queryArgument =
+        'first:5,sortKey: CREATED_AT, reverse:true, query:"product_type:deal",after:"$cursor"';
+    await listingsQuery.fetchShopifyGraphqlQuery(
+        query.fetchProducts(queryArgument), 'product');
+    shopifyProducts = listingsQuery.shopifyQueryResult!;
+    listingsQuery.shopifyQueryResult!.forEach((product) {
+      shopifyProducts.add(product);
+    });
+    setState(() {});
+  }
+
+  _getSharePreferences() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    shopifyIds = prefs.getStringList('sample1');
   }
 }

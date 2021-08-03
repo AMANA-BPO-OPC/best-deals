@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 import 'package:best_deals/common/services/ShopifyQueries/ShopifyQueries.dart';
 import 'package:best_deals/common/services/ShopifyQueries/ShopifyGQLConfigurations.dart';
@@ -28,7 +29,9 @@ class _LoadingPostListingsState extends State<LoadingPostListings> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Text('Post Listings Loading!!!'),
+        child: Center(
+          child: SpinKitCircle(color: Colors.blue[400], size: 50.0),
+        ),
       ),
     );
   }
